@@ -1,1 +1,2 @@
-# The code is still being organized and will be available soon.
+Our trained model will be uploaded to the cloud soon.
+
