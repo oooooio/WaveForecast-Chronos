@@ -33,10 +33,10 @@ def load_train_data(path, prediction_length):
         window = df.iloc[i : i + windows_size].copy()
         lost = window["SWH"].isnull().mean()
         if lost > 0.05:
-            i += 1 
+            i += 1
             continue
         if window["SWH"].iloc[-prediction_length:].isna().any():
-            i += 1 
+            i += 1
             continue
         item_id += 1
         window["item_id"] = item_id
@@ -76,8 +76,32 @@ for filepath in filepaths:
             eval_metric="RMSE",
             path=workdir,
         ).fit(
+            # All Model Use default hyperparameters
             train_data=train_data,
             tuning_data=val_data,
             presets="best_quality",
             verbosity=2,
+            hyperparameters={
+                "DeepAR": {},
+                "AutoETS": {},
+                "DirectTabular": {},
+                "RecursiveTabular": {},
+                "DynamicOptimizedTheta": {},
+                "TemporalFusionTransformer": {},
+                "NPTS": {},
+                "SeasonalNaive": {},
+                "PatchTST": {},
+                "TiDE": {},
+                "Chronos": [
+                    {
+                        "model_path": "bolt_base",
+                        "ag_args": {"name_suffix": "ZeroShot"},
+                    },
+                    {
+                        "model_path": "bolt_small",
+                        "fine_tune": True,
+                        "ag_args": {"name_suffix": "FineTuned"},
+                    },
+                ],
+            },
         )
